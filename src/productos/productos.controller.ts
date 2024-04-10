@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, ParseIntPipe } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
@@ -16,7 +16,7 @@ export class ProductosController {
   }
 
   //@Get()
-  @MessagePattern({cmd:'obtener-producto'})
+  @MessagePattern({cmd:'obtener-productos'})
   findAll(@Payload() paginacionDto:PaginacionDto) {
     return this.productosService.findAll(paginacionDto);
   }
@@ -37,7 +37,12 @@ export class ProductosController {
 
   //@Delete(':id')
   @MessagePattern({cmd:'eliminar-producto'})
-  remove(@Payload('id') id: number) {
-    return this.productosService.remove(+id);
+  remove(@Payload('id' , ParseIntPipe) id: number) {
+    return this.productosService.remove(id);
+  }
+
+  @MessagePattern({cmd:'validar-producto'})
+  validateProduct(@Payload() ids: number[]) {
+    return this.productosService.validateProduct(ids);
   }
 }
